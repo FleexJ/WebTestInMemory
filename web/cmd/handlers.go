@@ -215,6 +215,7 @@ func (app *application) changeUserPOST(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+	app.saveToken(w, *tkn, &newU)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
