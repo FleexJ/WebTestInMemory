@@ -35,12 +35,6 @@ func (app *application) deleteToken(w http.ResponseWriter, u user, t token) erro
 		newCookie(idCookieName, ""))
 	http.SetCookie(w,
 		newCookie(tokenCookieName, ""))
-	//Декодируем токен из куки
-	tDecode, err := base64.StdEncoding.DecodeString(t.Token)
-	if err != nil {
-		return err
-	}
-	t.Token = string(tDecode)
 	app.tokens.deleteByToken(t)
 	return nil
 }

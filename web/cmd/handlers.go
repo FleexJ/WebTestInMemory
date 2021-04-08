@@ -158,7 +158,11 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	app.tokens.deleteByToken(*tkn)
+	err := app.deleteToken(w, *u, *tkn)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
 	app.infoLog.Println("Пользователь вышел:", u.Email, "\tid:", u.Id)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
