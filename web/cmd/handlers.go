@@ -158,11 +158,7 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	err := app.deleteToken(w, tkn.Token)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
+	app.tokens.deleteByToken(*tkn)
 	app.infoLog.Println("Пользователь вышел:", u.Email, "\tid:", u.Id)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -215,7 +211,7 @@ func (app *application) changeUserPOST(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	app.saveToken(w, *tkn, &newU)
+	app.tokens.updateUser(newU)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -270,6 +266,7 @@ func (app *application) changePasswordPOST(w http.ResponseWriter, r *http.Reques
 		app.serverError(w, err)
 		return
 	}
+	app.tokens.updateUser(*u)
 	http.Redirect(w, r, "/logout/", http.StatusSeeOther)
 }
 
@@ -326,10 +323,6 @@ func (app *application) deleteUserPOST(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	err = app.deleteToken(w, tkn.Token)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
+	app.tokens.clearById(tkn.IdUser)
 	http.Redirect(w, r, "/logout/", http.StatusSeeOther)
 }

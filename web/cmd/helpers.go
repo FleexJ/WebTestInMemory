@@ -66,7 +66,7 @@ func (app *application) auth(w http.ResponseWriter, email, password string) erro
 		IdUser: u.Id.Hex(),
 		Token:  genToken,
 	}
-	app.saveToken(w, tkn, u)
+	app.saveToken(w, *u, tkn)
 	return nil
 }
 
@@ -81,7 +81,8 @@ func (app *application) checkAuth(r *http.Request) (*token, *user) {
 	if err != nil {
 		return nil, nil
 	}
-	u := app.tokens.getUser(string(tDecode))
+	tkn.Token = string(tDecode)
+	u := app.tokens.getUserByToken(*tkn)
 	if u == nil {
 		return nil, nil
 	}
