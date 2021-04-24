@@ -1,5 +1,5 @@
 # WebTestInMemory
-### Этот тот же самый [проект](https://github.com/kreslojerry/WebTest) (Golang MVC + MongoDB).  
+### Этот тот же самый [проект](https://github.com/FleexJ/WebTest) (Golang MVC + MongoDB).  
 Только авторизированные пользователи хранятся не в базе, а в памяти приложения, 
 то есть специальной карте (struct mapTokens).  
 Теперь обращение к БД происходит только тогда, когда пользователь пытается залогиниться.  
