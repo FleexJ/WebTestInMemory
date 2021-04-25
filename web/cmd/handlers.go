@@ -54,7 +54,11 @@ func (app *application) usersPageGET(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	users := getAllUsers()
+	users, err := getAllUsers()
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
 	err = ts.Execute(w, struct {
 		User  *user
 		Users []user
@@ -164,7 +168,6 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	app.infoLog.Println("Пользователь вышел:", u.Email, "\tid:", u.Id)
-
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 

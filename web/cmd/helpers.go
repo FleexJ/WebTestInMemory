@@ -50,11 +50,14 @@ func newCookie(name, value string) *http.Cookie {
 //Выдает новый токен доступа
 //при успехе нет ошибки
 func (app *application) auth(w http.ResponseWriter, email, password string) error {
-	u := getUserByEmail(email)
+	u, err := getUserByEmail(email)
+	if err != nil {
+		return err
+	}
 	if u == nil {
 		return errors.New("user not found")
 	}
-	err := u.comparePassword(password)
+	err = u.comparePassword(password)
 	if err != nil {
 		return err
 	}

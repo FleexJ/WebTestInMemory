@@ -10,14 +10,6 @@ type token struct {
 	Token  string
 }
 
-//Проверка токена на пустоту
-func (t token) isEmpty() bool {
-	if t.Token == "" || t.IdUser == "" {
-		return true
-	}
-	return false
-}
-
 //Сохраняет токен
 func (app *application) saveToken(w http.ResponseWriter, u user, t token) {
 	http.SetCookie(w,
