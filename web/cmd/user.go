@@ -37,22 +37,13 @@ func (u *user) valid(repPassword string) (bool, error) {
 	return true, nil
 }
 
-//Проверка пользователя на пустоту
-func (u user) isEmpty() bool {
-	empty := user{}
-	if u == empty {
-		return true
-	}
-	return false
-}
-
 //Сравнение пароля пользователя
 func (u *user) comparePassword(password string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
-	if err == nil {
-		return nil
+	if err != nil {
+		return err
 	}
-	return err
+	return nil
 }
 
 //Сохранение пользователя в базе
@@ -62,11 +53,13 @@ func (u user) saveUser() error {
 		return err
 	}
 	defer session.Close()
+
 	collection := session.DB(database).C(usersCol)
 	bcryptPassw, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
+
 	u.Password = string(bcryptPassw)
 	u.Id = bson.NewObjectId()
 	err = collection.Insert(u)
@@ -83,6 +76,7 @@ func (u user) updateUser() error {
 		return err
 	}
 	defer session.Close()
+
 	collection := session.DB(database).C(usersCol)
 	err = collection.Update(bson.M{"_id": u.Id}, u)
 	if err != nil {
@@ -98,11 +92,13 @@ func (u user) updateUserPassword(password string) error {
 		return err
 	}
 	defer session.Close()
+
 	collection := session.DB(database).C(usersCol)
 	bcryptPassw, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
+
 	u.Password = string(bcryptPassw)
 	err = collection.Update(bson.M{"_id": u.Id}, u)
 	if err != nil {
@@ -118,6 +114,7 @@ func (u user) deleteUser() error {
 		return err
 	}
 	defer session.Close()
+
 	collection := session.DB(database).C(usersCol)
 	err = collection.Remove(bson.M{"_id": u.Id})
 	if err != nil {

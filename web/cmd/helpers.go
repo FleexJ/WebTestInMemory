@@ -57,18 +57,22 @@ func (app *application) auth(w http.ResponseWriter, email, password string) erro
 	if u == nil {
 		return errors.New("user not found")
 	}
+
 	err = u.comparePassword(password)
 	if err != nil {
 		return err
 	}
+
 	genToken, err := app.generateToken(u.Id.Hex())
 	if err != nil {
 		return err
 	}
+
 	tkn := token{
 		IdUser: u.Id.Hex(),
 		Token:  genToken,
 	}
+
 	app.saveToken(w, *u, tkn)
 	return nil
 }
@@ -79,16 +83,19 @@ func (app *application) checkAuth(r *http.Request) (*token, *user) {
 	if tkn == nil {
 		return nil, nil
 	}
+
 	//Декодируем токен из куки
 	tDecode, err := base64.StdEncoding.DecodeString(tkn.Token)
 	if err != nil {
 		return nil, nil
 	}
+
 	tkn.Token = string(tDecode)
 	u := app.tokens.getUserByToken(*tkn)
 	if u == nil {
 		return nil, nil
 	}
+
 	return tkn, u
 }
 

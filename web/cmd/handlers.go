@@ -12,6 +12,7 @@ func (app *application) indexPageGET(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
+
 	ts, err := template.ParseFiles(
 		"./ui/views/page.index.tmpl",
 		"./ui/views/header.main.tmpl",
@@ -20,6 +21,7 @@ func (app *application) indexPageGET(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+
 	tkn, u := app.checkAuth(r)
 	if tkn == nil || u == nil {
 		err = ts.Execute(w, struct {
@@ -46,6 +48,7 @@ func (app *application) usersPageGET(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
 	ts, err := template.ParseFiles(
 		"./ui/views/page.users.tmpl",
 		"./ui/views/header.main.tmpl",
@@ -54,11 +57,13 @@ func (app *application) usersPageGET(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+
 	users, err := getAllUsers()
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
+
 	err = ts.Execute(w, struct {
 		User  *user
 		Users []user
@@ -78,6 +83,7 @@ func (app *application) signUpPageGET(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
 	ts, err := template.ParseFiles(
 		"./ui/views/page.signUp.tmpl",
 		"./ui/views/header.main.tmpl",
@@ -86,6 +92,7 @@ func (app *application) signUpPageGET(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+
 	err = ts.Execute(w, nil)
 	if err != nil {
 		app.serverError(w, err)
@@ -112,11 +119,13 @@ func (app *application) signUpPagePOST(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/signUp/", http.StatusSeeOther)
 		return
 	}
+
 	err = u.saveUser()
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
+
 	app.infoLog.Println("Новый пользователь:", u.Email)
 	http.Redirect(w, r, "/signIn/", http.StatusSeeOther)
 }
@@ -128,6 +137,7 @@ func (app *application) signInPageGET(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
 	ts, err := template.ParseFiles(
 		"./ui/views/page.signIn.tmpl",
 		"./ui/views/header.main.tmpl",
@@ -136,6 +146,7 @@ func (app *application) signInPageGET(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+
 	err = ts.Execute(w, nil)
 	if err != nil {
 		app.serverError(w, err)
@@ -151,6 +162,7 @@ func (app *application) signInPagePOST(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/signIn/", http.StatusSeeOther)
 		return
 	}
+
 	err := app.auth(w, email, password)
 	if err != nil {
 		if err.Error() == "user not found" {
@@ -161,6 +173,7 @@ func (app *application) signInPagePOST(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
 	app.infoLog.Println("Пользователь вошел:", email)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -172,11 +185,8 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	err := app.deleteToken(w, *u, *tkn)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
+
+	app.deleteToken(w, *u, *tkn)
 	app.infoLog.Println("Пользователь вышел:", u.Email, "\tid:", u.Id)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -188,6 +198,7 @@ func (app *application) changeUserGET(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
 	ts, err := template.ParseFiles(
 		"./ui/views/page.changeUser.tmpl",
 		"./ui/views/header.main.tmpl",
@@ -196,6 +207,7 @@ func (app *application) changeUserGET(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+
 	err = ts.Execute(w, struct {
 		User *user
 	}{
@@ -213,6 +225,7 @@ func (app *application) changeUserPOST(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
 	newU := user{
 		Id:       u.Id,
 		Email:    r.FormValue("email"),
@@ -229,11 +242,13 @@ func (app *application) changeUserPOST(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/changeUser/", http.StatusSeeOther)
 		return
 	}
+
 	err = newU.updateUser()
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
+
 	app.tokens.updateUser(newU)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -245,6 +260,7 @@ func (app *application) changePasswordGET(w http.ResponseWriter, r *http.Request
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
 	ts, err := template.ParseFiles(
 		"./ui/views/page.changePassword.tmpl",
 		"./ui/views/header.main.tmpl",
@@ -271,6 +287,7 @@ func (app *application) changePasswordPOST(w http.ResponseWriter, r *http.Reques
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
 	password := r.FormValue("password")
 	newPassword := r.FormValue("newPassword")
 	repNewPassword := r.FormValue("repNewPassword")
@@ -279,11 +296,13 @@ func (app *application) changePasswordPOST(w http.ResponseWriter, r *http.Reques
 		http.Redirect(w, r, "/changePassword/", http.StatusSeeOther)
 		return
 	}
+
 	err := u.comparePassword(password)
 	if err != nil {
 		http.Redirect(w, r, "/changePassword/", http.StatusSeeOther)
 		return
 	}
+
 	err = u.updateUserPassword(newPassword)
 	if err != nil {
 		app.serverError(w, err)
@@ -300,6 +319,7 @@ func (app *application) deleteUserGET(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
 	ts, err := template.ParseFiles(
 		"./ui/views/page.deleteUser.tmpl",
 		"./ui/views/header.main.tmpl",
@@ -326,26 +346,31 @@ func (app *application) deleteUserPOST(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 	if password == "" || email == "" {
 		http.Redirect(w, r, "/deleteUser/", http.StatusSeeOther)
 		return
 	}
+
 	err := u.comparePassword(password)
 	if err != nil {
 		http.Redirect(w, r, "/deleteUser/", http.StatusSeeOther)
 		return
 	}
+
 	if email != u.Email {
 		http.Redirect(w, r, "/deleteUser/", http.StatusSeeOther)
 		return
 	}
+
 	err = u.deleteUser()
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
+
 	app.tokens.clearById(tkn.IdUser)
 	http.Redirect(w, r, "/logout/", http.StatusSeeOther)
 }

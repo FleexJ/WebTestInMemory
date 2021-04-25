@@ -18,6 +18,7 @@ func getUserByEmail(email string) (*user, error) {
 		return nil, err
 	}
 	defer session.Close()
+
 	collection := session.DB(database).C(usersCol)
 	var u user
 	err = collection.Find(bson.M{"email": email}).One(&u)
@@ -33,6 +34,7 @@ func getUserById(id bson.ObjectId) (*user, error) {
 		return nil, err
 	}
 	defer session.Close()
+
 	collection := session.DB(database).C(usersCol)
 	var u user
 	err = collection.Find(bson.M{"_id": id}).One(&u)
@@ -49,6 +51,7 @@ func getAllUsers() ([]user, error) {
 		return nil, err
 	}
 	defer session.Close()
+
 	collection := session.DB(database).C(usersCol)
 	var users []user
 	err = collection.Find(bson.M{}).All(&users)

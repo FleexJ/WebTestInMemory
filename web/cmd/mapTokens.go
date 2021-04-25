@@ -48,10 +48,12 @@ func (m *mapTokens) clearById(id string) {
 //Удаляет токен пользователя из карты
 func (m *mapTokens) deleteByToken(t token) {
 	id := t.IdUser
+
 	//Если записи нет, то ничего не делаем
 	if (*m)[id] == nil {
 		return
 	}
+
 	//Пересобираем токены без учета удаляемого
 	var newSlice []token
 	for _, el := range (*m)[id].Tokens {
@@ -60,6 +62,7 @@ func (m *mapTokens) deleteByToken(t token) {
 		}
 	}
 	(*m)[id].Tokens = newSlice
+
 	//Если не осталось токенов, то удаляем запись в карте
 	if len(newSlice) == 0 {
 		delete(*m, id)
@@ -69,10 +72,12 @@ func (m *mapTokens) deleteByToken(t token) {
 //Получаем хозяина токена, если он есть
 func (m mapTokens) getUserByToken(t token) *user {
 	id := t.IdUser
+
 	//Если нет записи этого пользователя
 	if m[id] == nil {
 		return nil
 	}
+
 	//Перебираем все токены пользователя на предмет совпадения, чтобы вернуть искомый
 	for _, el := range m[id].Tokens {
 		if el.Token == t.Token {
