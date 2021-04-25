@@ -18,20 +18,23 @@ type user struct {
 }
 
 //Валидация пользователя перед записью в базу
-func (u *user) valid(repPassword string) bool {
+func (u *user) valid(repPassword string) (bool, error) {
 	matched, _ := regexp.MatchString(regexEmail, u.Email)
 	if !matched ||
 		u.Name == "" ||
 		u.Surname == "" ||
 		u.Password == "" ||
 		u.Password != repPassword {
-		return false
+		return false, nil
 	}
 	uG, err := getUserByEmail(u.Email)
-	if err != nil || uG != nil && u.Id != uG.Id {
-		return false
+	if err != nil {
+		return false, err
 	}
-	return true
+	if uG != nil && u.Id != uG.Id {
+		return false, nil
+	}
+	return true, nil
 }
 
 //Проверка пользователя на пустоту

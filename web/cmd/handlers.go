@@ -103,11 +103,16 @@ func (app *application) signUpPagePOST(w http.ResponseWriter, r *http.Request) {
 	}
 	repPassword := r.FormValue("repPassword")
 
-	if !u.valid(repPassword) {
+	valid, err := u.valid(repPassword)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	if !valid {
 		http.Redirect(w, r, "/signUp/", http.StatusSeeOther)
 		return
 	}
-	err := u.saveUser()
+	err = u.saveUser()
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -148,8 +153,13 @@ func (app *application) signInPagePOST(w http.ResponseWriter, r *http.Request) {
 	}
 	err := app.auth(w, email, password)
 	if err != nil {
-		http.Redirect(w, r, "/signIn/", http.StatusSeeOther)
-		return
+		if err.Error() == "user not found" {
+			http.Redirect(w, r, "/signIn/", http.StatusSeeOther)
+			return
+		} else {
+			app.serverError(w, err)
+			return
+		}
 	}
 	app.infoLog.Println("Пользователь вошел:", email)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -209,11 +219,16 @@ func (app *application) changeUserPOST(w http.ResponseWriter, r *http.Request) {
 		Surname: r.FormValue("surname"),
 	}
 	newU.Password = u.Password
-	if !newU.valid(newU.Password) {
+	valid, err := newU.valid(newU.Password)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	if !valid {
 		http.Redirect(w, r, "/changeUser/", http.StatusSeeOther)
 		return
 	}
-	err := newU.updateUser()
+	err = newU.updateUser()
 	if err != nil {
 		app.serverError(w, err)
 		return
