@@ -181,6 +181,7 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+//Страница изменения пользователя
 func (app *application) changeUserGET(w http.ResponseWriter, r *http.Request) {
 	tkn, u := app.checkAuth(r)
 	if tkn == nil || u == nil {
