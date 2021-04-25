@@ -214,12 +214,12 @@ func (app *application) changeUserPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	newU := user{
-		Id:      u.Id,
-		Email:   r.FormValue("email"),
-		Name:    r.FormValue("name"),
-		Surname: r.FormValue("surname"),
+		Id:       u.Id,
+		Email:    r.FormValue("email"),
+		Name:     r.FormValue("name"),
+		Surname:  r.FormValue("surname"),
+		Password: u.Password,
 	}
-	newU.Password = u.Password
 	valid, err := newU.valid(newU.Password)
 	if err != nil {
 		app.serverError(w, err)

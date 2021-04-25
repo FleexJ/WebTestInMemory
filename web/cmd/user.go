@@ -114,7 +114,6 @@ func (u user) updateUserPassword(password string) error {
 //Удаление пользователя из базы
 func (u user) deleteUser() error {
 	session, err := mgo.Dial(mongoUrl)
-
 	if err != nil {
 		return err
 	}
