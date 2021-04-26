@@ -120,7 +120,7 @@ func (app *application) signUpPagePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = usr.saveUser()
+	err = app.saveUser(usr)
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -253,7 +253,7 @@ func (app *application) changeUserPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = newU.updateUser()
+	err = app.updateUser(newU)
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -313,7 +313,7 @@ func (app *application) changePasswordPOST(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	err = usr.updateUserPassword(newPassword)
+	err = app.updateUserPassword(*usr, newPassword)
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -375,7 +375,7 @@ func (app *application) deleteUserPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = usr.deleteUser()
+	err = app.deleteUser(*usr)
 	if err != nil {
 		app.serverError(w, err)
 		return
