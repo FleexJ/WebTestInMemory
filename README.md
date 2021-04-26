@@ -1,5 +1,6 @@
 # WebTestInMemory
-## Web-приложение Golang + MongoDB, за основу взят проект [WebTest.](https://github.com/FleexJ/WebTest/edit/master/README.md)  
+## Web-приложение Golang + MongoDB.
+### За основу взят проект [WebTest.](https://github.com/FleexJ/WebTest/edit/master/README.md)  
 
 В приложении 2 роли:
 + Неавторизированный пользователь:
