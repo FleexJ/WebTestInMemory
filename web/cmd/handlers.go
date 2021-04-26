@@ -58,7 +58,7 @@ func (app *application) usersPageGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := getAllUsers()
+	users, err := app.getAllUsers()
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -110,7 +110,7 @@ func (app *application) signUpPagePOST(w http.ResponseWriter, r *http.Request) {
 	}
 	repPassword := r.FormValue("repPassword")
 
-	valid, err := valid(usr, repPassword)
+	valid, err := app.valid(usr, repPassword)
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -164,7 +164,7 @@ func (app *application) signInPagePOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//auth user
-	usr, err := getUserByEmail(email)
+	usr, err := app.getUserByEmail(email)
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -243,7 +243,7 @@ func (app *application) changeUserPOST(w http.ResponseWriter, r *http.Request) {
 		Surname:  r.FormValue("surname"),
 		Password: usr.Password,
 	}
-	valid, err := valid(newU, newU.Password)
+	valid, err := app.valid(newU, newU.Password)
 	if err != nil {
 		app.serverError(w, err)
 		return

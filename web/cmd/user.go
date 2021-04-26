@@ -18,7 +18,7 @@ type User struct {
 }
 
 //Валидация пользователя перед записью в базу
-func valid(usr User, repPassword string) (bool, error) {
+func (app application) valid(usr User, repPassword string) (bool, error) {
 	matched, _ := regexp.MatchString(regexEmail, usr.Email)
 	if !matched ||
 		usr.Name == "" ||
@@ -27,7 +27,7 @@ func valid(usr User, repPassword string) (bool, error) {
 		usr.Password != repPassword {
 		return false, nil
 	}
-	uG, err := getUserByEmail(usr.Email)
+	uG, err := app.getUserByEmail(usr.Email)
 	if err != nil {
 		return false, err
 	}

@@ -12,7 +12,7 @@ const (
 )
 
 //Получение пользователя по адресу почты
-func getUserByEmail(email string) (*User, error) {
+func (app application) getUserByEmail(email string) (*User, error) {
 	session, err := mgo.Dial(mongoUrl)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func getUserByEmail(email string) (*User, error) {
 }
 
 //Возвращает список всех пользователей
-func getAllUsers() ([]User, error) {
+func (app application) getAllUsers() ([]User, error) {
 	session, err := mgo.Dial(mongoUrl)
 	if err != nil {
 		return nil, err
