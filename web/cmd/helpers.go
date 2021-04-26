@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/base64"
-	"errors"
 	"golang.org/x/crypto/bcrypt"
 	"math/rand"
 	"net/http"
@@ -43,38 +42,6 @@ func newCookie(name, value string) *http.Cookie {
 		Path:    "/",
 		Expires: time.Now().Add(expDay * time.Hour),
 	}
-}
-
-//Функция авторизации пользователя
-//Ищет совпадения в базе пользователей
-//Выдает новый токен доступа
-//при успехе нет ошибки
-func (app *application) auth(w http.ResponseWriter, email, password string) error {
-	usr, err := getUserByEmail(email)
-	if err != nil {
-		return err
-	}
-	if usr == nil {
-		return errors.New("user not found")
-	}
-
-	err = usr.comparePassword(password)
-	if err != nil {
-		return err
-	}
-
-	genToken, err := app.generateToken(usr.Id.Hex())
-	if err != nil {
-		return err
-	}
-
-	tkn := Token{
-		IdUser: usr.Id.Hex(),
-		Token:  genToken,
-	}
-
-	app.saveToken(w, *usr, tkn)
-	return nil
 }
 
 //Проверка токена доступа, возвращает токен с данными и текущего пользователя при успехе

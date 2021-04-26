@@ -163,18 +163,28 @@ func (app *application) signInPagePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := app.auth(w, email, password)
+	//auth user
+	usr, err := getUserByEmail(email)
 	if err != nil {
-		if err.Error() == "User not found" {
-			http.Redirect(w, r, "/signIn/", http.StatusSeeOther)
-			return
-		} else {
-			app.serverError(w, err)
-			return
-		}
+		app.serverError(w, err)
+		return
+	}
+	if usr == nil || usr.comparePassword(password) != nil {
+		http.Redirect(w, r, "/signIn/", http.StatusSeeOther)
+		return
+	}
+	genToken, err := app.generateToken(usr.Id.Hex())
+	if err != nil {
+		app.serverError(w, err)
+		return
 	}
 
-	app.infoLog.Println("Пользователь вошел:", email)
+	tkn := Token{
+		IdUser: usr.Id.Hex(),
+		Token:  genToken,
+	}
+	app.saveToken(w, *usr, tkn)
+	app.infoLog.Println("Пользователь вошел:", email, "\tid:", usr.Id)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 

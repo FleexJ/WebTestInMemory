@@ -23,23 +23,11 @@ func getUserByEmail(email string) (*User, error) {
 	var usr User
 	err = collection.Find(bson.M{"email": email}).One(&usr)
 	if err != nil {
-		return nil, err
-	}
-	return &usr, nil
-}
-
-func getUserById(id bson.ObjectId) (*User, error) {
-	session, err := mgo.Dial(mongoUrl)
-	if err != nil {
-		return nil, err
-	}
-	defer session.Close()
-
-	collection := session.DB(database).C(usersCol)
-	var usr User
-	err = collection.Find(bson.M{"_id": id}).One(&usr)
-	if err != nil {
-		return nil, err
+		if err.Error() == "not found" {
+			return nil, nil
+		} else {
+			return nil, err
+		}
 	}
 	return &usr, nil
 }

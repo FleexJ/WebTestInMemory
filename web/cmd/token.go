@@ -29,5 +29,6 @@ func (app *application) deleteToken(w http.ResponseWriter, u User, tkn Token) {
 		newCookie(idCookieName, ""))
 	http.SetCookie(w,
 		newCookie(tokenCookieName, ""))
+
 	app.tokens.deleteByToken(tkn)
 }
