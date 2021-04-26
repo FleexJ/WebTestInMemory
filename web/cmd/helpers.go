@@ -12,7 +12,7 @@ import (
 
 const (
 	idCookieName    = "id"
-	tokenCookieName = "Token"
+	tokenCookieName = "token"
 	expDay          = 60 * 24
 )
 
