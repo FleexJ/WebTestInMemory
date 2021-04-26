@@ -18,7 +18,7 @@ type User struct {
 }
 
 //Валидация пользователя перед записью в базу
-func (usr *User) valid(repPassword string) (bool, error) {
+func valid(usr User, repPassword string) (bool, error) {
 	matched, _ := regexp.MatchString(regexEmail, usr.Email)
 	if !matched ||
 		usr.Name == "" ||

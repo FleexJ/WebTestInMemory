@@ -110,7 +110,7 @@ func (app *application) signUpPagePOST(w http.ResponseWriter, r *http.Request) {
 	}
 	repPassword := r.FormValue("repPassword")
 
-	valid, err := usr.valid(repPassword)
+	valid, err := valid(usr, repPassword)
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -243,7 +243,7 @@ func (app *application) changeUserPOST(w http.ResponseWriter, r *http.Request) {
 		Surname:  r.FormValue("surname"),
 		Password: usr.Password,
 	}
-	valid, err := newU.valid(newU.Password)
+	valid, err := valid(newU, newU.Password)
 	if err != nil {
 		app.serverError(w, err)
 		return
