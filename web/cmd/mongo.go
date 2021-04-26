@@ -25,9 +25,8 @@ func getUserByEmail(email string) (*User, error) {
 	if err != nil {
 		if err.Error() == "not found" {
 			return nil, nil
-		} else {
-			return nil, err
 		}
+		return nil, err
 	}
 	return &usr, nil
 }
