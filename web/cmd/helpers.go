@@ -12,12 +12,12 @@ import (
 
 const (
 	idCookieName    = "id"
-	tokenCookieName = "token"
+	tokenCookieName = "Token"
 	expDay          = 60 * 24
 )
 
 //Возвращает токен, считанный из куки
-func (app *application) getTokenCookies(r *http.Request) *token {
+func (app *application) getTokenCookies(r *http.Request) *Token {
 	cookieId, err := r.Cookie(idCookieName)
 	if err != nil {
 		return nil
@@ -29,7 +29,7 @@ func (app *application) getTokenCookies(r *http.Request) *token {
 	if cookieId.Value == "" || cookieToken.Value == "" {
 		return nil
 	}
-	return &token{
+	return &Token{
 		IdUser: cookieId.Value,
 		Token:  cookieToken.Value,
 	}
@@ -50,35 +50,35 @@ func newCookie(name, value string) *http.Cookie {
 //Выдает новый токен доступа
 //при успехе нет ошибки
 func (app *application) auth(w http.ResponseWriter, email, password string) error {
-	u, err := getUserByEmail(email)
+	usr, err := getUserByEmail(email)
 	if err != nil {
 		return err
 	}
-	if u == nil {
+	if usr == nil {
 		return errors.New("user not found")
 	}
 
-	err = u.comparePassword(password)
+	err = usr.comparePassword(password)
 	if err != nil {
 		return err
 	}
 
-	genToken, err := app.generateToken(u.Id.Hex())
+	genToken, err := app.generateToken(usr.Id.Hex())
 	if err != nil {
 		return err
 	}
 
-	tkn := token{
-		IdUser: u.Id.Hex(),
+	tkn := Token{
+		IdUser: usr.Id.Hex(),
 		Token:  genToken,
 	}
 
-	app.saveToken(w, *u, tkn)
+	app.saveToken(w, *usr, tkn)
 	return nil
 }
 
 //Проверка токена доступа, возвращает токен с данными и текущего пользователя при успехе
-func (app *application) checkAuth(r *http.Request) (*token, *user) {
+func (app *application) checkAuth(r *http.Request) (*Token, *User) {
 	tkn := app.getTokenCookies(r)
 	if tkn == nil {
 		return nil, nil
@@ -91,12 +91,12 @@ func (app *application) checkAuth(r *http.Request) (*token, *user) {
 	}
 
 	tkn.Token = string(tDecode)
-	u := app.tokens.getUserByToken(*tkn)
-	if u == nil {
+	usr := app.tokens.getUserByToken(*tkn)
+	if usr == nil {
 		return nil, nil
 	}
 
-	return tkn, u
+	return tkn, usr
 }
 
 //Генерирует новый токен на основе слова

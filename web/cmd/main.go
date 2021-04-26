@@ -9,7 +9,7 @@ import (
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
-	tokens   *mapTokens
+	tokens   *MapTokens
 }
 
 func main() {
